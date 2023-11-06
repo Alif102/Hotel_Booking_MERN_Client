@@ -1,53 +1,36 @@
 const express = require('express');
-const HotelModel = require('../models/Hotel');
+const HotelModel = require('../models/Hotel.js');
+const { createHotel, updateHotel, deleteHotel, getHotel } = require('../controllers/hotels.js');
 // const { default: Hotel } = require('../models/Hotel');
 const router = express.Router();
 
 
-router.post('/', async (req,res)=>{
-    // res.send('this is hotels')
-    const newHotel = new HotelModel(req.body);
-    try {
-        const savedHotel = await newHotel.save();
-        res.status(200).json(savedHotel);
-        
-    } catch (error) {
-        res.status(500).json(error)
-    }
-
-})
+router.post('/', createHotel )
 
 
 // Update
 
-router.put('/:id', async (req,res)=>{
-    try {
-        const UpdateHotel = await HotelModel.findByIdAndUpdate
-        (req.params.id , 
-            {$set : req.body},
-            {new: true}
-        );
-        res.status(200).json(UpdateHotel);
-        
-    } catch (error) {
-        res.status(500).json(error)
-    }
-
-})
+router.put('/:id', updateHotel)
 
 
 // Delete 
-router.delete('/:id', async (req,res)=>{
+router.delete('/:id', deleteHotel)
+
+// Get
+router.get('/:id', getHotel)
+
+// Get All
+router.get('/', async (req,res)=>{
     try {
-         await HotelModel.findByIdAndDelete
-        (req.params.id);
-        res.status(200).json('hotel deleted');
+        const hotels = await HotelModel.find()
+        res.status(200).json(hotels);
         
     } catch (error) {
         res.status(500).json(error)
     }
 
 })
+
 
 module.exports = router;
 // export default router

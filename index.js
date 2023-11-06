@@ -1,60 +1,65 @@
-const express = require('express');
+const express = require('express')
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 const cors = require('cors');
-const { default: mongoose } = require('mongoose');
 const app = express(); 
-const authRouter = require('./Routes/Auth.js');
-const usersRouter = require('./Routes/Users.js');
-const roomsRouter = require('./Routes/Rooms.js');
-const hotelsRouter = require('./Routes/Hotels.js');
-
-const port = process.env.PORT || 5000; 
-
+const port = process.env.PORT || 5000;
 
 // middleware
 
-app.use(cors());
-app.use(express.json());
+ app.use(cors());
+ app.use(express.json());
 
 
-const connect = async () => {
-    try {
-        await mongoose.connect(process.env.MONGO);
-        console.log('mongo connect')
-    } catch (error) {
-        throw error
-        
+ 
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.30z9ip6.mongodb.net/?retryWrites=true&w=majority`;
+console.log(uri)
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+    serverApi: {
+      version: ServerApiVersion.v1,
+      strict: true,
+      deprecationErrors: true,
     }
+  });
+  async function run() {
+    try {
+      // Connect the client to the server	(optional starting in v4.7)
+      // await client.connect();
+  
+      const roomCollection = client.db('Booking').collection('rooms')
+      app.post('/rooms', async(req,res)=> {
+        const newProduct = req.body;
+        console.log(newProduct)
+        const result = await roomCollection.insertOne(newProduct);
+        res.send(result)
+  })
+  
+  app.get('/rooms', async (req,res)=> {
+    const cursor = roomCollection.find();
+    const result = await cursor.toArray();
+    res.send(result);
+  })
+
+
+  
+    // Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  } finally {
+    // Ensures that the client will close when you finish/error
+    // await client.close();
+  }
 }
+run().catch(console.dir);
 
-mongoose.connection.on("connected", () => {
-    console.log("mongoDB connected!");
-  });
-
-  mongoose.connection.on("disconnected", () => {
-    console.log("mongoDB disconnected!");
-  });
-
-
-
-
-
-
-app.use('/auth', authRouter);
-
-app.use('/users', usersRouter);
-
-app.use('/hotels', hotelsRouter);
-
-app.use('/rooms', roomsRouter);
 
 
 app.get('/', (req,res)=> {
-    res.send('Hotel Booking server is running')
+    res.send('Coffee server is running')
 
 })
 
 app.listen(port, ()=> {
-    connect();
-    console.log(`Hotel Booking server running on port : ${port}`)
+    console.log(`coffee server running on port : ${port}`)
 })
