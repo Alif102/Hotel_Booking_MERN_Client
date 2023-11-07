@@ -40,6 +40,13 @@ const client = new MongoClient(uri, {
     const result = await cursor.toArray();
     res.send(result);
   })
+  app.get("/rooms/:id", async(req,res)=> {
+    const id = req.params.id;
+    // const smallBrandName = brandName.toLowerCase()
+    const query = {_id :new ObjectId (id)};
+    const result = await roomCollection.findOne(query);
+    res.send(result)
+  })
 
 
   
