@@ -65,13 +65,13 @@ app.get('/bookings', async (req,res)=> {
   res.send(result);
 })
 
-app.get("/bookings/:id", async(req,res)=> {
-  const id = req.params.id;
-  // const smallBrandName = brandName.toLowerCase()
-  const query = {_id : id};
-  const result = await bookingCollection.findOne(query).toArray();
-  res.send(result)
-})
+// app.get("/bookings/:id", async(req,res)=> {
+//   const id = req.params.id;
+//   // const smallBrandName = brandName.toLowerCase()
+//   const query = {_id : id};
+//   const result = await bookingCollection.findOne(query).toArray();
+//   res.send(result)
+// })
 
 app.get('/bookings/:email', async (req, res) => {
   const email = req.params.email  
@@ -81,7 +81,12 @@ app.get('/bookings/:email', async (req, res) => {
 })
 
 
-
+app.delete('/bookings/:id',async(req,res)=>{
+  const id = req.params.id
+   console.log(id)
+   
+     res.send(result);
+    })
 
   
 
