@@ -26,7 +26,9 @@ const client = new MongoClient(uri, {
     try {
       // Connect the client to the server	(optional starting in v4.7)
       // await client.connect();
-      const bookingCollection = client.db('Booking').collection('bookings')
+       const bookingCollection = client.db('Booking').collection('bookings')
+
+      // const bookingCollection = client.db('Booking').collection('bookings');
       const roomCollection = client.db('Booking').collection('rooms')
       app.post('/rooms', async(req,res)=> {
         const newProduct = req.body;
@@ -54,6 +56,24 @@ const client = new MongoClient(uri, {
     const result = await bookingCollection.insertOne(booking);
     res.send(result)
 })
+
+app.get('/bookings', async (req,res)=> {
+  const id = req.params.id
+  console.log(id)
+  const cursor = bookingCollection.find();
+  const result = await cursor.toArray();
+  res.send(result);
+})
+
+app.get("/bookings/:id", async(req,res)=> {
+  const id = req.params.id;
+  // const smallBrandName = brandName.toLowerCase()
+  const query = {_id : id};
+  const result = await bookingCollection.findOne(query).toArray();
+  res.send(result)
+})
+
+
 
   
 
